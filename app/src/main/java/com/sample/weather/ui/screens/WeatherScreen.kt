@@ -50,13 +50,15 @@ import timber.log.Timber
 
 
 @Composable
-fun WeatherScreen(viewModel: WeatherViewModel = viewModel()) {
+fun WeatherScreen(onErrorMessage:(message: String) -> Unit = {},
+                  viewModel: WeatherViewModel = viewModel()) {
 
   val weather by viewModel.weatherState.collectAsState()
   var cityName by remember { mutableStateOf("") }
 
   WeatherComposeUI(cityName, weather, onCityNameChange = { cityName = it },
-    onSearchClick = { viewModel.  getGeoCode(cityName) })
+    onSearchClick = { viewModel.  getGeoCode(cityName) },
+    onErrorMessage = onErrorMessage )
 
 }
 
@@ -64,7 +66,8 @@ fun WeatherScreen(viewModel: WeatherViewModel = viewModel()) {
 fun WeatherComposeUI(cityName: String,
                      weather: WeatherUiState,
                      onCityNameChange:(cityName: String) -> Unit = {},
-                     onSearchClick:() -> Unit = {} ){
+                     onSearchClick:() -> Unit = {},
+                     onErrorMessage:(message: String) -> Unit = {}){
   WeatherTheme {
 
     Column(
@@ -114,13 +117,15 @@ fun WeatherComposeUI(cityName: String,
     }
 
     // Show the weather CARD UI
-    WeatherUi(weatherUiState = weather)
+    WeatherUi(weatherUiState = weather,
+              onErrorMessage = onErrorMessage)
   }
 
 }
 
 @Composable
-fun WeatherUi(weatherUiState: WeatherUiState) {
+fun WeatherUi(weatherUiState: WeatherUiState,
+              onErrorMessage: (message: String) -> Unit = {}) {
   when (weatherUiState) {
     is WeatherUiState.Success -> {
       WeatherCard(weatherResponse = weatherUiState.weatherResponse)
@@ -128,10 +133,11 @@ fun WeatherUi(weatherUiState: WeatherUiState) {
 
     is WeatherUiState.Loading -> {
       Loading()
-      Timber.tag("TAG").d("Loading")
+      Timber.d("WeatherUiState Loading")
     }
     is WeatherUiState.Error -> {
-      Timber.tag("TAG").d("Error")
+      onErrorMessage(weatherUiState.message)
+      Timber.d("WeatherUiState Error")
     }
     is WeatherUiState.Idle -> {
       //Do nothing
@@ -142,7 +148,7 @@ fun WeatherUi(weatherUiState: WeatherUiState) {
 
 sealed interface WeatherUiState {
   data class Success(val weatherResponse: WeatherResponse) : WeatherUiState
-  data object Error : WeatherUiState
+  data class Error(val message: String) : WeatherUiState
   data object Loading : WeatherUiState
   data object Idle : WeatherUiState
 }

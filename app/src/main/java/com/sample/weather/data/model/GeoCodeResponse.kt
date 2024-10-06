@@ -4,12 +4,13 @@ import com.google.gson.annotations.SerializedName
 
 data class GeoCodeResponse(
     @SerializedName("results") val results: List<Result>,
+    @SerializedName("error_message") val error_message: String? = "",
     @SerializedName("status") val status: String
 )
 
 data class Result(
     @SerializedName("address_components") val address_components: List<AddressComponent>,
-    @SerializedName("baformatted_addressse") val formatted_address: String,
+    @SerializedName("formatted_address") val formatted_address: String,
     @SerializedName("geometry") val geometry: Geometry,
     @SerializedName("place_id") val place_id: String,
     @SerializedName("types") val types: List<String>

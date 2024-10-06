@@ -18,5 +18,4 @@ object WeatherRepositoryModule {
         return impl
     }
 
-
 }

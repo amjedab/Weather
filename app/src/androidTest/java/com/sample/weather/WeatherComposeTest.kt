@@ -27,7 +27,7 @@ class WeatherComposeTest {
   @Test
   fun testWeatherScreen_Search_button_shown() {
     composeTestRule.setContent {
-      WeatherComposeUI("Boston", WeatherUiState.Idle, {}, {})
+      WeatherComposeUI("Boston", WeatherUiState.Idle, {}, {}, {})
     }
     composeTestRule.onNodeWithTag("enter_city_name")
       .performTextInput("Salt Lake city")

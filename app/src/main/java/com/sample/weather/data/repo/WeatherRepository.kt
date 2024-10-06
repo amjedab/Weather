@@ -7,6 +7,6 @@ interface WeatherRepository {
 
   suspend fun getWeather(lat: Double, lon: Double): Result<WeatherResponse>
 
-  suspend fun getLatLong(city: String): GeoCodeResponse
+  suspend fun getLatLong(city: String): Result<GeoCodeResponse>
 
 }

@@ -25,8 +25,18 @@ class WeatherRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getLatLong(city: String): GeoCodeResponse {
-        return geoCodeApi.getCoordinates(city)
+    override suspend fun getLatLong(city: String): Result<GeoCodeResponse> {
+        val response = geoCodeApi.getCoordinates(city)
+        return if (response.isSuccessful && response.body() != null && response.body()!!.error_message.isNullOrEmpty()
+        ) {
+            Timber.i("geoCodeApi isSuccessful")
+            Result.success(response.body()!!)
+        } else {
+            Timber.d("geoCodeApi failure")
+            response.body()?.error_message?.let {
+                Timber.d("geoCodeApi error message $it") }
+            Result.failure(Exception((response.body()?.error_message + response.body()?.status) ?: response.message()))
+        }
     }
 
 }

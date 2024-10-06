@@ -42,10 +42,10 @@ class WeatherViewModel @Inject constructor(
           Timber.i("getWeather response: ${response.getOrNull()}")
           _weatherState.value = WeatherUiState.Success(response.getOrNull()!!)
         } else {
-          _weatherState.value = WeatherUiState.Error
+          _weatherState.value = WeatherUiState.Error("Error in getWeather: ${response.exceptionOrNull()}")
         }
       } catch (e: Exception) {
-        _weatherState.value = WeatherUiState.Error
+        _weatherState.value = WeatherUiState.Error("Error in getWeather: ${e.message}")
         Timber.i("Error in getWeather: ${e.message}")
       }
     }
@@ -56,18 +56,23 @@ class WeatherViewModel @Inject constructor(
       try {
         _weatherState.value = WeatherUiState.Loading
         val response = weatherRepository.getLatLong(cityName)
-        _geoCode.value = response
-        Timber.i("getGeoCode response: ${response.results.firstOrNull()}")
-        if (response.results.isNotEmpty() && response.results.firstOrNull() != null &&
-          response.results.first().geometry.location.lat != 0.0 && response.results.first().geometry.location.lng != 0.0
-        ) {
-          getWeather(
-            response.results.first().geometry.location.lat,
-            response.results.first().geometry.location.lat
-          )
+        if(response.isSuccess && response.getOrNull() != null) {
+          _geoCode.value = response.getOrNull()!!
+          Timber.i("getGeoCode response: ${response.getOrNull()!!.results.firstOrNull()}")
+
+          if (response.getOrNull()!!.results.firstOrNull() != null &&
+            response.getOrNull()!!.results.first().geometry.location.lat != 0.0 && response.getOrNull()!!.results.first().geometry.location.lng != 0.0
+          ) {
+            getWeather(
+              response.getOrNull()!!.results.first().geometry.location.lat,
+              response.getOrNull()!!.results.first().geometry.location.lat
+            )
+          }
+        } else {
+          _weatherState.value = WeatherUiState.Error("Error in getGeoCode: ${response.exceptionOrNull()}")
         }
       } catch (e: Exception) {
-        _weatherState.value = WeatherUiState.Error
+        _weatherState.value = WeatherUiState.Error("Error in getGeoCode: ${e.message}")
         Timber.i("Error in getGeoCode: ${e.message}")
       }
     }
