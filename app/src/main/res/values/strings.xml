@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">WeatherToday</string>
+    <string name="geo_code_api_key">XYZ</string>
+    <string name="open_weather_api_key">XYZ</string>
+</resources>
