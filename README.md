@@ -28,8 +28,8 @@ To function properly, the app requires API keys for both OpenWeatherMap and Goog
 `Weather/app/src/main/res/values/String.xml`
 
 ```xml
-<string name="geo_code_api_key">XYZ</string>
-<string name="open_weather_api_key">XYZ</string>
+<string name="geo_code_api_key">API-key</string>
+<string name="open_weather_api_key">API-key</string>
 ```
 
 ![Screenshot_20241006_102751](https://github.com/user-attachments/assets/9179a2cc-794f-4510-b1f4-89649643a6c1)
